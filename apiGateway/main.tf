@@ -1,38 +1,3 @@
-provider "aws" {
-  region = "us-east-1"
-}
-
-#Huge hail mary
-resource "aws_iam_role_policy" "lambda_execution_policy" {
-  name   = "LambdaExecutionPolicy"
-  role   = data.terraform_remote_state.iam.outputs.lambda_role_name
-  policy = jsonencode({
-    "Version": "2012-10-17",
-    "Statement": [
-      {
-        "Effect": "Allow",
-        "Action": [
-          "lambda:InvokeFunction"
-        ],
-        "Resource": [
-          "${data.terraform_remote_state.lambda.outputs.lambda_function_arn}"
-        ]
-      },
-      {
-        "Sid": "Statement1",
-        "Effect": "Allow",
-        "Action": [
-          "execute-api:/*"
-        ],
-        "Resource": [
-          "arn:aws:execute-api:us-east-1:*:*"
-        ]
-      }
-    ]
-  })
-}
-
-
 
 resource "aws_apigatewayv2_api" "crud_api" {
   name          = "crud_api"
@@ -75,8 +40,7 @@ resource "aws_apigatewayv2_integration" "get_users_by_id" {
   integration_method = "POST"
   integration_uri    = data.terraform_remote_state.lambda.outputs.lambda_function_arn
   #Using suggested solution
-  #credentials_arn    = data.terraform_remote_state.iam.outputs.api_gateway_execution_role_arn
-  credentials_arn    = data.terraform_remote_state.iam.outputs.lambda_role
+  credentials_arn    = data.terraform_remote_state.iam.outputs.api_gateway_execution_role_arn
 }
 
 resource "aws_apigatewayv2_integration" "get_users" {
@@ -85,8 +49,7 @@ resource "aws_apigatewayv2_integration" "get_users" {
   integration_method = "POST"
   integration_uri    = data.terraform_remote_state.lambda.outputs.lambda_function_arn
   #Using suggested solution
-  #credentials_arn    = data.terraform_remote_state.iam.outputs.api_gateway_execution_role_arn
-  credentials_arn    = data.terraform_remote_state.iam.outputs.lambda_role
+  credentials_arn    = data.terraform_remote_state.iam.outputs.api_gateway_execution_role_arn
 }
 
 resource "aws_apigatewayv2_integration" "put_users" {
@@ -95,8 +58,7 @@ resource "aws_apigatewayv2_integration" "put_users" {
   integration_method = "POST"
   integration_uri    = data.terraform_remote_state.lambda.outputs.lambda_function_arn
   #Using suggested solution
-  #credentials_arn    = data.terraform_remote_state.iam.outputs.api_gateway_execution_role_arn
-  credentials_arn    = data.terraform_remote_state.iam.outputs.lambda_role
+  credentials_arn    = data.terraform_remote_state.iam.outputs.api_gateway_execution_role_arn
 }
 
 resource "aws_apigatewayv2_integration" "delete_users_by_id" {
@@ -104,8 +66,7 @@ resource "aws_apigatewayv2_integration" "delete_users_by_id" {
   integration_type   = "AWS_PROXY"
   integration_method = "POST"
   integration_uri    = data.terraform_remote_state.lambda.outputs.lambda_function_arn
-  #credentials_arn    = data.terraform_remote_state.iam.outputs.api_gateway_execution_role_arn
-  credentials_arn    = data.terraform_remote_state.iam.outputs.lambda_role
+  credentials_arn    = data.terraform_remote_state.iam.outputs.api_gateway_execution_role_arn
 }
 
 
