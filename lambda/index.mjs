@@ -50,19 +50,41 @@ export const handler = async (event, context) => {
         );
         body = body.users;
         break;
-      case "PUT /users":
-        let requestJSON = JSON.parse(event.body);
-        await dynamo.send(
-          new PutCommand({
+      case "PUT /users/{id}":
+        const requestJSON = JSON.parse(event.body);
+        const userId = event.pathParameters.id;
+      
+        // Check if the user with the specified ID exists
+        const existingUser = await dynamo.send(
+          new GetCommand({
             TableName: tableName,
-            Item: {
-              id: requestJSON.id,
-              firstName: requestJSON.firstName,
-              name: requestJSON.lastName,
+            Key: {
+              id: userId,
             },
           })
         );
-        body = `Put user ${requestJSON.id}`;
+      
+        if (!existingUser.Item) {
+          statusCode = 404;
+          body = `User with ID ${userId} not found.`;
+          break;
+        }
+      
+        // Perform the update
+        const updatedUser = {
+          id: userId,
+          firstName: requestJSON.firstName,
+          lastName: requestJSON.lastName,
+        };
+      
+        await dynamo.send(
+          new PutCommand({
+            TableName: tableName,
+            Item: updatedUser,
+          })
+        );
+      
+        body = `Updated user ${userId}`;
         break;
       default:
         throw new Error(`Unsupported route: "${event.routeKey}"`);
