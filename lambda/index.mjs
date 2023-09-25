@@ -19,7 +19,7 @@ export const handler = async (event, context) => {
   const headers = {
     "Content-Type": "application/json",
   };
-
+  let requestJSON = null;
   try {
     switch (event.routeKey) {
       case "DELETE /users/{id}":
@@ -45,10 +45,10 @@ export const handler = async (event, context) => {
         body = body.Item;
         break;
       case "GET /users":
-        body = await dynamo.send(
+        const users = await dynamo.send(
           new ScanCommand({ TableName: tableName })
         );
-        body = body.users;
+        body = users.Items; 
         break;
       case "PUT /users/{id}":
         const requestJSON = JSON.parse(event.body);
@@ -86,6 +86,29 @@ export const handler = async (event, context) => {
       
         body = `Updated user ${userId}`;
         break;
+        //
+      case "POST /users":
+        const postrequestJSON = JSON.parse(event.body); 
+        //const requestJSON = JSON.parse(event.body);
+        // Generate an incrementally increasing ID
+        const nextId = await getNextId();
+        
+        const newUser = {
+          id: nextId,
+          firstName: postrequestJSON.firstName,
+          lastName: postrequestJSON.lastName,
+        };
+        
+        await dynamo.send(
+          new PutCommand({
+            TableName: tableName,
+            Item: newUser,
+          })
+        );
+      
+        body = `Created user with ID: ${nextId}`;
+        break;
+        //
       default:
         throw new Error(`Unsupported route: "${event.routeKey}"`);
     }
@@ -95,10 +118,27 @@ export const handler = async (event, context) => {
   } finally {
     body = JSON.stringify(body);
   }
-
   return {
     statusCode,
     body,
     headers,
   };
 };
+
+// Helper function to get the next available user ID
+async function getNextId() {
+  const users = await dynamo.send(
+    new ScanCommand({ TableName: tableName })
+  );
+  
+  // Find the maximum existing ID and increment it
+  let maxId = 0;
+  for (const user of users.Items) {
+    const userId = parseInt(user.id, 10); // Convert user.id to a number
+    if (!isNaN(userId) && userId > maxId) {
+      maxId = userId;
+    }
+  }
+  return (maxId + 1).toString();
+  //
+}

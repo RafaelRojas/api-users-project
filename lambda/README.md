@@ -3,15 +3,26 @@
 
 
 
-* Create user (PUT)
+* Create user (PUT). It creates a user with an incremental user id, no need to define user id.
+
+~~~
+{
+  "routeKey": "POST /users",
+  "body": "{\"firstName\": \"John\", \"lastName\": \"Doe\"}"
+}
+
+~~~
+
+* Modify an existing user. It takes a valid ID as parameter
 ~~~
 {
   "routeKey": "PUT /users/{id}",
   "pathParameters": {
-    "id": "4"
+    "id": "3" // Replace with the user ID you want to modify
   },
-  "body": "{\"firstName\": \"testUpdate\", \"lastName\": \"lastTestUpdate\"}"
+  "body": "{\"firstName\": \"UpdatedFirstName\", \"lastName\": \"UpdatedLastName\"}"
 }
+
 ~~~
 
 * Get User (GET /users/{id})
@@ -32,7 +43,7 @@
 }
 ~~~
 
-* Delete User (DELETE ?users/{id})
+* Delete User (DELETE /users/{id})
 ~~~
 {
   "routeKey": "DELETE /users/{id}",
