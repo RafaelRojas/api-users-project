@@ -77,7 +77,7 @@ resource "aws_apigatewayv2_route" "list_users_route" {
 resource "aws_lambda_permission" "apigw_list_users" {
   statement_id  = "AllowAPIGatewayInvoke"
   action        = "lambda:InvokeFunction"
-  function_name = data.terraform_remote_state.modifyUserlambda.outputs.modify_user_function_name
+  function_name = data.terraform_remote_state.listUserslambda.outputs.listusers_function_name
   principal     = "apigateway.amazonaws.com"
 
   source_arn = "${aws_apigatewayv2_api.users_api_gw.execution_arn}/*/GET/users"
@@ -106,7 +106,6 @@ resource "aws_lambda_permission" "apigw_modify_users" {
   action        = "lambda:InvokeFunction"
   function_name = data.terraform_remote_state.modifyUserlambda.outputs.modify_user_function_name
   principal     = "apigateway.amazonaws.com"
-
   source_arn = "${aws_apigatewayv2_api.users_api_gw.execution_arn}/*/PUT/users/{id}"
 }
 ##modify user block ends
