@@ -12,5 +12,7 @@ Sample payload for lambda:
 Sample payload restAPI
 
 ~~~
-TBD
+curl --location '{api_url}/{dev/prod}/users' \
+--header 'Content-Type: application/json' \
+--data '{"id": "10", "firstName": "John-apigw", "lastName": "doe-apigw" }'
 ~~~
