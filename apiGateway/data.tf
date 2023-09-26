@@ -1,8 +1,32 @@
-data "terraform_remote_state" "lambda" {
+data "terraform_remote_state" "createUserlambda" {
   backend = "local"
 
   config = {
-    path = "../lambda/terraform.tfstate"
+    path = "../lambda/createUser/terraform.tfstate"
+  }
+}
+
+data "terraform_remote_state" "deleteUserlambda" {
+  backend = "local"
+
+  config = {
+    path = "../lambda/deleteUser/terraform.tfstate"
+  }
+}
+
+data "terraform_remote_state" "listUserslambda" {
+  backend = "local"
+
+  config = {
+    path = "../lambda/listUsers/terraform.tfstate"
+  }
+}
+
+data "terraform_remote_state" "modifyUserlambda" {
+  backend = "local"
+
+  config = {
+    path = "../lambda/modifyUser/terraform.tfstate"
   }
 }
 
