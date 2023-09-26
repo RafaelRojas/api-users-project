@@ -3,7 +3,7 @@
 # .tfstate files
 *.tfstate
 *.tfstate.*
-
+*.zip
 crash.log
 crash.*.log
 
