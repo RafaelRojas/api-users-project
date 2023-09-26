@@ -14,6 +14,22 @@ data "terraform_remote_state" "deleteUserlambda" {
   }
 }
 
+data "terraform_remote_state" "listUserslambda" {
+  backend = "local"
+
+  config = {
+    path = "../lambda/listUsers/terraform.tfstate"
+  }
+}
+
+data "terraform_remote_state" "modifyUserlambda" {
+  backend = "local"
+
+  config = {
+    path = "../lambda/modifyUser/terraform.tfstate"
+  }
+}
+
 data "terraform_remote_state" "iam" {
   backend = "local"
 
