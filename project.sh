@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-
+# I know, there's must be a better way to deploy and destroy this but I'm tired
 # Function to display help message
 function display_help {
     echo "Usage: $0 [--deploy-all] [--destroy-all] [--populate-db]"
@@ -20,55 +20,54 @@ while [ $# -gt 0 ]; do
         --deploy-all)
             # Add deployment logic here
             echo "Deploying all resources..."
-            alias tf='terraform'
-
-            # Change directory and apply Terraform in each directory
-            for dir in iam dynamo; do
-                cd "$dir"
-                tf init
-                tf apply -auto-approve
-                cd ..
-            done
-            for dir in lambda/createUser lambda/modifyUser lambda/listUsers lambda/deleteUser; do
-                if [ -d "$dir" ]; then
-                    cd "$dir"
-                    tf init
-                    tf apply -auto-approve
-                    cd ..
-                fi
-            done
-            cd ../..
-            cd apiGateway
-            tf init
-            tf apply -auto-approve
+            cd iam/
+            terraform apply -auto-approve
             cd ..
+            cd dynamo/
+            terraform apply -auto-approve
+            cd ..                    
+            cd lambda/createUser
+            terraform apply -auto-approve
+            cd ../..
+            cd lambda/deleteUser
+            terraform apply -auto-approve
+            cd ../..                    
+            cd lambda/listUsers
+            terraform apply -auto-approve
+            cd ../..  
+            cd lambda/modifyUser
+            terraform apply -auto-approve
+            cd ../..  
+            cd apiGateway/
+            terraform apply -auto-approve
+            cd ..   
             shift
             ;;
         --destroy-all)
-            # Add destruction logic here
             echo "Destroying all resources..."
-                        echo "Deploying all resources..."
-            alias tf='terraform'
-
-            # Change directory and apply Terraform in each directory
-            for dir in iam dynamo; do
-                cd "$dir"
-                tf init
-                tf destroy -auto-approve
-                cd ..
-            done
-            for dir in lambda/createUser lambda/modifyUser lambda/listUsers lambda/deleteUser; do
-                if [ -d "$dir" ]; then
-                    cd "$dir"
-                    tf init
-                    tf destroy -auto-approve
-                    cd ..
-                fi
-            done
+            cd apiGateway/
+            terraform destroy -auto-approve
+            cd ..   
+            cd lambda/createUser
+            terraform destroy -auto-approve
             cd ../..
-            cd apiGateway
-            tf init
-            tf apply -auto-approve
+            cd lambda/deleteUser
+            terraform destroy -auto-approve
+            cd ../..                    
+            cd lambda/listUsers
+            terraform destroy -auto-approve
+            cd ../..  
+            cd lambda/modifyUser
+            terraform destroy -auto-approve
+            cd ../..  
+            cd dynamo
+            terraform destroy -auto-approve
+            cd ..
+            cd dynamo
+            terraform destroy -auto-approve
+            cd ..                   
+            cd iam/
+            terraform destroy -auto-approve
             cd ..
             shift
             ;;
