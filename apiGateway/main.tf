@@ -43,7 +43,7 @@ resource "aws_apigatewayv2_integration" "delete_user_integration" {
 
 resource "aws_apigatewayv2_route" "delete_user_route" {
   api_id    = aws_apigatewayv2_api.users_api_gw.id
-  route_key = "DELETE /items/{id}"
+  route_key = "DELETE /users/{id}"
   target    = "integrations/${aws_apigatewayv2_integration.delete_user_integration.id}"
 }
 
@@ -53,7 +53,7 @@ resource "aws_lambda_permission" "apigw_delete" {
   function_name = data.terraform_remote_state.deleteUserlambda.outputs.deleteuser_function_name
   principal     = "apigateway.amazonaws.com"
 
-  source_arn = "${aws_apigatewayv2_api.users_api_gw.execution_arn}/*/DELETE/items/{id}"
+  source_arn = "${aws_apigatewayv2_api.users_api_gw.execution_arn}/*/DELETE/users/{id}"
 }
 #delete user block ends
 
